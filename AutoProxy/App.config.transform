@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="AutoProxy" type="AutoProxy.Configuration.AutoProxyConfigurationSection, AutoProxy, Version=1.0.0.6, Culture=neutral" />
+  </configSections>
+  <AutoProxy output="~/Scripts/Proxy" generateMinified="true" minifiedName="" generateEach="true" >
+    <Include>
+      <File src="~/Scripts/Proxy/Core.js" />
+      <File src="~/Scripts/Proxy/BaseProxy.js" />
+    </Include>
+  </AutoProxy>
+</configuration>

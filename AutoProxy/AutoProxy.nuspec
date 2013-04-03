@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <tags>ASP.NET MVC WebApi Javascript OOP</tags>
+  </metadata>
+  <files>
+    <file src="Web.config.transform" target="content" />
+    <file src="App.config.transform" target="content" />
+  </files>
+</package>
