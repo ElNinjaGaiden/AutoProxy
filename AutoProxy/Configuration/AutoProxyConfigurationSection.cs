@@ -2,7 +2,7 @@
 
 namespace AutoProxy.Configuration
 {
-    internal class AutoProxyConfigurationSection : ConfigurationSection
+    internal class AutoProxyConfigurationSection : ConfigurationSection, IAutoProxyConfiguration
     {
         [ConfigurationProperty("output", IsRequired = true)]
         public string Output
@@ -17,50 +17,43 @@ namespace AutoProxy.Configuration
             }
         }
 
-        [ConfigurationProperty("generateMinified", IsRequired = false, DefaultValue = true)]
-        public bool GenerateMinified
+        [ConfigurationProperty("proxyPerController", IsRequired = false, DefaultValue = true)]
+        public bool ProxyPerController
         {
             get
             {
-                return (bool)this["generateMinified"];
+                return (bool)this["proxyPerController"];
             }
             set
             {
-                this["generateMinified"] = value;
+                this["proxyPerController"] = value;
             }
         }
 
-        [ConfigurationProperty("minifiedName", IsRequired = false)]
-        public string MinifiedName
+        [ConfigurationProperty("Minified", IsRequired = false)]
+        public MinifiedElement MinifiedConfiguration
         {
             get
             {
-                return (string)this["minifiedName"];
+                return (MinifiedElement)this["Minified"];
             }
             set
             {
-                this["minifiedName"] = value;
+                this["Minified"] = value;
             }
         }
 
-        [ConfigurationProperty("generateEach", IsRequired = false, DefaultValue = true)]
-        public bool GenerateEach
+
+        public IMinified Minified
         {
             get
             {
-                return (bool)this["generateEach"];
+                return this.MinifiedConfiguration;
             }
             set
             {
-                this["generateEach"] = value;
+                throw new System.NotImplementedException();
             }
-        }
-
-        [ConfigurationProperty("Include", IsRequired = false)]
-        public IncludeConfigurationCollection RequiredFiles
-        {
-            get { return ((IncludeConfigurationCollection)(base["Include"])); }
-            set { base["Include"] = value; }
         }
     }
 }

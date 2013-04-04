@@ -2,7 +2,7 @@
 
 namespace AutoProxy.Configuration
 {
-    internal class FileConfig : ConfigurationElement
+    internal class FileElement : ConfigurationElement, IFile
     {
         [ConfigurationProperty("src", IsRequired = true)]
         public string Src

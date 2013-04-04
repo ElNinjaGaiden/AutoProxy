@@ -30,7 +30,7 @@ namespace AutoProxy
             if (path.StartsWith("~"))
                 path = path.Replace("~", HostingEnvironment.ApplicationPhysicalPath);
 
-            using (FileStream output = File.OpenWrite(path))
+            using (FileStream output = System.IO.File.OpenWrite(path))
             {
                 str.CopyTo(output);
             }
@@ -40,7 +40,7 @@ namespace AutoProxy
         {
             string content = string.Empty;
 
-            if (File.Exists(path))
+            if (System.IO.File.Exists(path))
             {
                 using (var input = new StreamReader(path))
                 {

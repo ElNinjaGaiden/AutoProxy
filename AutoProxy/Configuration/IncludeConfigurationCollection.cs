@@ -6,12 +6,12 @@ namespace AutoProxy.Configuration
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new FileConfig();
+            return new FileElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((FileConfig)element).Src;
+            return ((FileElement)element).Src;
         }
 
         protected override string ElementName
