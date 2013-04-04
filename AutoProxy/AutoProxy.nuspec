@@ -14,5 +14,6 @@
   <files>
     <file src="Web.config.transform" target="content" />
     <file src="App.config.transform" target="content" />
+    <file src="AutoProxy.config" target="content" />
   </files>
 </package>
