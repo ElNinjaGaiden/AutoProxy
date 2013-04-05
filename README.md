@@ -17,23 +17,23 @@ on the client side as we are on the server side.
 
 Several like this is common:  
 
-  $.ajax(
-  {
-      url: 'theUrl',
-      type: 'GET/POST/PUT/DELETE',
-      contentType: 'application/json',
-      data: dataIfApplies,
-      context: context,
-      success: function (response) {
-          //NOTES:  
-          //Handling the response here compromises the readability of the execution flow and  
-          //makes this segment itself difficult to reuse
-      },
-      failure: failCallback
-  });  
-
-  function failCallback() {  
-  }  
+    $.ajax(
+    {
+        url: 'theUrl',
+        type: 'GET/POST/PUT/DELETE',
+        contentType: 'application/json',
+        data: dataIfApplies,
+        context: context,
+        success: function (response) {
+            //NOTES:  
+            //Handling the response here compromises the readability of the execution flow and  
+            //makes this segment itself difficult to reuse
+        },
+        failure: failCallback
+    });  
+  
+    function failCallback() {  
+    }  
 
 The problems mentioned on the notes can be solved just doing the same thing that the failure handler is doing  
 but we are still reapiting all that "configuration" code.  
@@ -54,76 +54,67 @@ way we interact with our server.
 
 Having a controller like this:  
 
-  public IEnumerable<Person> GetAll()
-  {
-      ...
-  }
-
-  public Person Get(string id)
-  {
-      ...
-  }
-
-  [HttpPost]
-  public Response Save([FromBody]Person value)
-  {
-      ...
-  }
-
-  [HttpPost]
-  public Response OtherThing([FromBody]SomeRequest value)
-  {
-      ...
-  }  
-
-AutoProxy is going to create this prototype:  
-
-  function PersonProxy(apiAddress) { 
-     BaseProxy.call(this, apiAddress, 'Person'); 
-  } 
-  
-  inheritPrototype(PersonProxy, BaseProxy);
-  
-  PersonProxy.prototype.GetAll = function (callback, context, carryover) { 
-     this.ExecuteRequest('GET', 'GetAll', null, callback, context, carryover); 
-  }; 
-  
-  PersonProxy.prototype.Get = function (request, callback, context, carryover) { 
-     this.ExecuteRequest('GET', 'Get', request, callback, context, carryover); 
-  }; 
-  
-  PersonProxy.prototype.Save = function (request, callback, context, carryover) { 
-     this.ExecuteRequest('POST', 'Save', request, callback, context, carryover); 
-  }; 
-  
-  PersonProxy.prototype.OtherThing = function (request, callback, context, carryover) { 
-     this.ExecuteRequest('POST', 'OtherThing', request, callback, context, carryover); 
-  }; 
-  
-And then your calls can be implemented like this:  
-
-  $(document).ready(function() {
-    var proxy = new PersonProxy('yourWebApiRootAddress');
-    
-    //Get all
-    proxy.GetAll(callback, this);
-    
-    //Get one
-    var request = { id: 2 };
-    proxy.Get(request, callback, this);
-    
-    //New
-    var newPerson = { ID: 10, Name: 'Jhon' };
-    proxy.Save(newPerson, callback, this);
-    
-    //Other
-    var otherRequest = {};
-    proxy.OtherThing(otherRequest, callback, this);
-    
-    function callback(response) {
-        console.log(response);
+    public IEnumerable<Person> GetAll()
+    {
+        ...
     }
-  });  
+  
+    public Person Get(string id)
+    {
+        ...
+    }
+  
+    [HttpPost]
+    public Response Save([FromBody]Person value)
+    {
+        ...
+    }
+  
+    [HttpPost]
+    public Response OtherThing([FromBody]SomeRequest value)
+    {
+        ...
+    }  
+  
+Your calls can be implemented like this:  
+
+    $(document).ready(function() {
+      var proxy = new PersonProxy('yourWebApiRootAddress');
+    
+      //Get all
+      proxy.GetAll(callback, this);
+    
+      //Get one
+      var request = { id: 2 };
+      proxy.Get(request, callback, this);
+    
+      //New
+      var newPerson = { ID: 10, Name: 'Jhon' };
+      proxy.Save(newPerson, callback, this);
+      
+      //Other
+      var otherRequest = {};
+      proxy.OtherThing(otherRequest, callback, this);
+      
+      function callback(response) {
+          console.log(response);
+      }
+    });  
+
+About the generation
+--------------------
+
+AutoProxy is going to create a single javascript file for each api controller and/or one single minified file.  
+This can be handled by configuration. Only the default generator constructor uses the config file.
+
+Once you have set you desired configuration, you just need yo create the generator and call the `ResolveProxies()`:  
+
+    var assemblies = new List<Assembly>() { Assembly.GetExecutingAssembly() };
+    var proxyGenerator = new AutoProxy.ProxyGenerator(assemblies);
+    proxyGenerator.ResolveProxies();
+
+Keeping those lines in your Global.asax makes your files to be updated everytime the api gets up, but you can
+choose your own strategy and invoke the generator when you need it.
 
 Dependencies
 ------------
