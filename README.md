@@ -54,27 +54,30 @@ way we interact with our server.
 
 Having a controller like this:  
 
-    public IEnumerable<Person> GetAll()
+    public class PersonController : ApiController
     {
-        ...
+      public IEnumerable<Person> GetAll()
+      {
+          ...
+      }
+    
+      public Person Get(string id)
+      {
+          ...
+      }
+    
+      [HttpPost]
+      public Response Save([FromBody]Person value)
+      {
+          ...
+      }
+    
+      [HttpPost]
+      public Response OtherThing([FromBody]SomeRequest value)
+      {
+          ...
+      }
     }
-  
-    public Person Get(string id)
-    {
-        ...
-    }
-  
-    [HttpPost]
-    public Response Save([FromBody]Person value)
-    {
-        ...
-    }
-  
-    [HttpPost]
-    public Response OtherThing([FromBody]SomeRequest value)
-    {
-        ...
-    }  
   
 Your calls can be implemented like this:  
 
