@@ -100,13 +100,15 @@ namespace AutoProxy
                 }
 
                 //Generate each separated proxy (according configuration)
+                var path = string.Empty;
                 if (this.Configuration.ProxyPerController)
                 {
                     //Save the current prototype into a script file
-                    var path = string.Format("{0}/{1}.{2}", this.Configuration.Output, controller.ProxyName, "js");
+                    path = string.Format("{0}/{1}.{2}", this.Configuration.Output, controller.ProxyName, "js");
                     prototype.SaveTo(path);
-                    result.Prototypes.Add(new ScriptFile { Src = path, Content = prototype });
                 }
+
+                result.Prototypes.Add(new ScriptFile { Src = path, Content = prototype });
             }
 
             //Generate the all minified proxy (according configuration)
