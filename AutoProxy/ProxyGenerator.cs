@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Hosting;
 using System.Web.Http;
+using AutoProxy.Annotations;
 using AutoProxy.Configuration;
 using Microsoft.Ajax.Utilities;
 
@@ -56,7 +57,8 @@ namespace AutoProxy
                     .Select(o => new ControllerMetadata
                     {
                         Name = o.Name.Replace("Controller", string.Empty),
-                        Actions = o.GetMethods(flags).Select(i => i)
+                        Actions = o.GetMethods(flags).Select(i => i),
+                        ProxyName = o.GetProxyName(o.Name.Replace("Controller", "Proxy"))
                     });
 
                 return controllers;
@@ -77,22 +79,22 @@ namespace AutoProxy
             foreach (var controller in this.Controllers)
             {
                 //This creates the prototype definition and make it inherits from the BaseProxy prototype. Example:
-                //function MyController (apiAddress) {
+                //function MyControllerProxy (apiAddress) {
                 //  BaseProxy.call(this, apiAddress, 'MyController');
                 //}
-                //inheritPrototype(CoreProxy, BaseProxy);
+                //inheritPrototype(MyControllerProxy, BaseProxy);
 
-                string prototype = "function " + controller.Name + "Proxy(apiAddress) { " + Environment.NewLine +
+                string prototype = "function " + controller.ProxyName + "(apiAddress) { " + Environment.NewLine +
                                     "   BaseProxy.call(this, apiAddress, '" + controller.Name + "'); " + Environment.NewLine +
                                     "} " + Environment.NewLine + Environment.NewLine +
-                                    "inheritPrototype(" + controller.Name + "Proxy, BaseProxy);" + Environment.NewLine + Environment.NewLine;
+                                    "inheritPrototype(" + controller.ProxyName + ", BaseProxy);" + Environment.NewLine + Environment.NewLine;
 
                 //Iterate over controller actions in order to add a new function to the prototype for each action found 
                 foreach (var action in controller.Actions)
                 {
                     var hasParameters = action.GetParameters().Any();
 
-                    prototype += controller.Name + "Proxy.prototype." + action.Name + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
+                    prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
                                 "   this.ExecuteRequest('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
                                 "}; " + Environment.NewLine + Environment.NewLine;
                 }
@@ -101,7 +103,7 @@ namespace AutoProxy
                 if (this.Configuration.ProxyPerController)
                 {
                     //Save the current prototype into a script file
-                    var path = string.Format("{0}/{1}.{2}", this.Configuration.Output, controller.Name + "Proxy", "js");
+                    var path = string.Format("{0}/{1}.{2}", this.Configuration.Output, controller.ProxyName, "js");
                     prototype.SaveTo(path);
                     result.Prototypes.Add(new ScriptFile { Src = path, Content = prototype });
                 }

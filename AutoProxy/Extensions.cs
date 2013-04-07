@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Web.Hosting;
 using System.Web.Http;
+using AutoProxy.Annotations;
 
 namespace AutoProxy
 {
@@ -75,6 +76,13 @@ namespace AutoProxy
             }
 
             return method;
+        }
+
+        public static string GetProxyName(this MemberInfo member, string defaultValue)
+        {
+            return member.GetCustomAttribute<AutoProxyAlias>() != null
+                ? member.GetCustomAttribute<AutoProxyAlias>().Value
+                : defaultValue;
         }
     }
 }

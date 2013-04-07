@@ -1,5 +1,6 @@
-﻿
-namespace AutoProxy.Configuration
+﻿using AutoProxy.Configuration;
+
+namespace AutoProxy
 {
     public class AutoProxyConfiguration: IAutoProxyConfiguration
     {

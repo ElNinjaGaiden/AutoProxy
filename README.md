@@ -36,7 +36,7 @@ Several like this is common:
     }  
 
 The problems mentioned on the notes can be solved just doing the same thing that the failure handler is doing  
-but we are still reapiting all that "configuration" code.  
+but we are still repeating all that "configuration" code.  
 
 jQuery shorthand methods are fine but they don't help us reaching a standard on the client side.  
 
@@ -54,7 +54,7 @@ way we interact with our server.
 
 Having a controller like this:  
 
-    public class PersonController : ApiController
+    public class PersonsController : ApiController
     {
       public IEnumerable<Person> GetAll()
       {
@@ -82,7 +82,7 @@ Having a controller like this:
 Your calls can be implemented like this:  
 
     $(document).ready(function() {
-      var proxy = new PersonProxy('yourWebApiRootAddress');
+      var proxy = new PersonsProxy('yourWebApiRootAddress');
     
       //Get all
       proxy.GetAll(callback, this);
@@ -119,6 +119,38 @@ Once you have set you desired configuration, you just need yo create the generat
 Keeping those lines in your Global.asax makes your files to be updated everytime the api gets up, but you can
 choose your own strategy and invoke the generator when you need it.
 
+Alias support
+-------------
+
+The tool uses by default the controller name and each function name to define the prototype name and members,
+but you can change that behavior by decorating those elements with the `[AutoProxyAlias("YourDesiredAlias")]` attribute,
+just like this:
+
+	[AutoProxyAlias("MyController")]
+    public class PersonsController : ApiController
+    {
+        [AutoProxyAlias("MyFunction")]
+        public IEnumerable<Person> GetAll()
+        {
+            ...
+        }
+    }
+
+And then we would be talking about something like this:
+
+	$(document).ready(function() {
+      var proxy = new MyController('yourWebApiRootAddress');
+    
+      //"Get all"
+      proxy.MyFunction(callback, this);
+      
+      function callback(response) {
+          console.log(response);
+      }
+    });
+
+The AutoProxyAlias attribute is defined in the AutoProxy.Annotations namespace.
+
 Dependencies
 ------------
 
@@ -126,3 +158,8 @@ AutoProxy depends on this packages:
 
 *  [jQuery](https://nuget.org/packages/jQuery/) on the client side
 *  [AjaxMin](https://nuget.org/packages/AjaxMin/) on the server side
+
+Demo
+----
+
+You can find a demo of AutoProxy [here](https://github.com/Yoinbol/AutoProxyDemo)

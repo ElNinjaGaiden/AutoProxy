@@ -41,10 +41,11 @@
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\AutoProxyConfiguration.cs" />
+    <Compile Include="Annotations\AutoProxyAlias.cs" />
+    <Compile Include="AutoProxyConfiguration.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Configuration\FileElement.cs" />
-    <Compile Include="Configuration\IAutoProxyConfiguration.cs" />
+    <Compile Include="IAutoProxyConfiguration.cs" />
     <Compile Include="IFile.cs" />
     <Compile Include="IMinified.cs" />
     <Compile Include="Configuration\IncludeConfigurationCollection.cs" />
@@ -63,7 +64,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="AutoProxy.config" />
-    <None Include="AutoProxy.nuspec" />
+    <None Include="AutoProxy.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Web.config.transform">
       <SubType>Designer</SubType>
