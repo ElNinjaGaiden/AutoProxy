@@ -53,11 +53,11 @@ namespace AutoProxy
 
                 IEnumerable<ControllerMetadata> controllers =
                     this.Assemblies.SelectMany(a => a.GetTypes())
-                    .Where(t => t.IsSubclassOf(typeof(ApiController)))
+                    .Where(t => t.IsSubclassOf(typeof(ApiController)) && t.GetCustomAttribute<AutoProxyIgnore>() == null)
                     .Select(o => new ControllerMetadata
                     {
                         Name = o.Name.Replace("Controller", string.Empty),
-                        Actions = o.GetMethods(flags).Select(i => i),
+                        Actions = o.GetMethods(flags).Where(a => a.GetCustomAttribute<AutoProxyIgnore>() == null).Select(i => i),
                         ProxyName = o.GetProxyName(o.Name.Replace("Controller", "Proxy"))
                     });
 

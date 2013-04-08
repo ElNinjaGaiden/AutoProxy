@@ -1,4 +1,13 @@
-﻿function inheritPrototype(childObject, parentObject) {
+﻿//General AutoProxy configuration
+var autoproxy =
+{
+    baseUrl: '',
+    contentType: 'application/json',
+    dataType: 'json',
+    includeActionName: true
+};
+
+function inheritPrototype(childObject, parentObject) {
     // Crockford’s method to copy the properties and methods from the parentObject onto the childObject
     // So the copyOfParent object now has everything the parentObject has 
     var copyOfParent = Object.create(parentObject.prototype);

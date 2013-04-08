@@ -1,5 +1,5 @@
 ﻿function BaseProxy(apiAddress, controllerName) {
-    this.apiAddress = apiAddress;
+    this.apiAddress = apiAddress != null && apiAddress != '' ? apiAddress : autoproxy.baseUrl;
     this.controllerName = controllerName;
 }
 
@@ -8,12 +8,12 @@ BaseProxy.prototype = {
 
     ResolveRequestUrl: function (actionName) {
         //Creates the url based on the api location, the controller and the action
-        var urlParts = [
-            this.apiAddress,
-            this.controllerName,
-            actionName
-        ];
-        return urlParts.join("/");
+        if (autoproxy.includeActionName) {
+            return [this.apiAddress, this.controllerName, actionName].join("/");
+        }
+        else {
+            return [this.apiAddress, this.controllerName].join("/");
+        }
     },
 
     ExecuteRequest: function (webActionType, actionName, request, callback, context, carryover) {
@@ -22,7 +22,8 @@ BaseProxy.prototype = {
         {
             url: this.ResolveRequestUrl(actionName),
             type: webActionType,
-            contentType: "application/json",
+            dataType: autoproxy.dataType,
+            contentType: autoproxy.contentType,
             data: (webActionType == 'POST' || webActionType == 'PUT') && request != null ? JSON.stringify(request) : request,
             context: context,
             success: function (response) {

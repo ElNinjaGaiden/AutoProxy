@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations\AutoProxyAlias.cs" />
+    <Compile Include="Annotations\AutoProxyIgnore.cs" />
     <Compile Include="AutoProxyConfiguration.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Configuration\FileElement.cs" />
@@ -63,7 +64,9 @@
     <None Include="App.config.transform">
       <SubType>Designer</SubType>
     </None>
-    <None Include="AutoProxy.config" />
+    <None Include="AutoProxy.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="AutoProxy.nuspec">
       <SubType>Designer</SubType>
     </None>
