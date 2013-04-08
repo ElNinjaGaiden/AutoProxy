@@ -193,6 +193,7 @@ There is also this `AutoProxyIgnore` attribute that you can use in order to igno
     }
 	
 Or:
+
 	[AutoProxyIgnore]
 	public class PersonsController : ApiController
     {
