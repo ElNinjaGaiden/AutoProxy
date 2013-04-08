@@ -82,7 +82,7 @@ Having a controller like this:
 Your calls can be implemented like this:  
 
     $(document).ready(function() {
-      var proxy = new PersonsProxy('yourWebApiRootAddress');
+      var proxy = new PersonsProxy();
     
       //Get all
       proxy.GetAll(callback, this);
@@ -102,7 +102,33 @@ Your calls can be implemented like this:
       function callback(response) {
           console.log(response);
       }
-    });  
+    });
+
+Client side configuration
+------------------------
+
+On the client side you can specify a couple of things in order to set your communication configuration with your server side.
+Those properties are handled in the "autoproxy" configuration object. This object has this options:
+
+*  autoproxy.baseUrl: to set the web api url for ALL your created proxies
+*  autoproxy.contentType: to set the data type you will be sending to tour server on every request
+*  autoproxy.dataType: to set the data type you will be expecting back from your server on every request
+*  autoproxy.includeActionName: to specify if controller action should be added to the url (some people prefer to configure their controllers as the very basic REST form)
+
+The default values for those settings are:
+
+*  autoproxy.baseUrl: ''
+*  autoproxy.contentType: 'application/json'
+*  autoproxy.dataType: 'json'
+*  autoproxy.includeActionName: true
+
+A custom configuration could look like this and it could be placed wherever you want:
+
+	<script type="text/javascript">
+		autoproxy.baseUrl = 'http://api.myserver/dataservices';
+		autoproxy.includeActionName = false;
+		autoproxy.dataType = 'xml'; //I want XML back
+	</script>
 
 About the generation
 --------------------
@@ -139,7 +165,7 @@ just like this:
 And then we would be talking about something like this:
 
 	$(document).ready(function() {
-      var proxy = new MyController('yourWebApiRootAddress');
+      var proxy = new MyController();
     
       //"Get all"
       proxy.MyFunction(callback, this);
@@ -150,6 +176,28 @@ And then we would be talking about something like this:
     });
 
 The AutoProxyAlias attribute is defined in the AutoProxy.Annotations namespace.
+
+Ignoring elements
+-----------------
+
+There is also this `AutoProxyIgnore` attribute that you can use in order to ignore controllers and/or action when creating your proxy library
+
+	public class PersonsController : ApiController
+    {
+      [HttpPost]
+	  [AutoProxyIgnore]
+      public Response OtherThing([FromBody]SomeRequest value)
+      {
+          //This action will be ignored by AutoProxy
+      }
+    }
+	
+Or:
+	[AutoProxyIgnore]
+	public class PersonsController : ApiController
+    {
+      //The entire controller will be ignored by AutoProxy and it won't be part of your proxy library
+    }
 
 Dependencies
 ------------
