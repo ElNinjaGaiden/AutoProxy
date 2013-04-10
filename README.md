@@ -212,3 +212,8 @@ Demo
 ----
 
 You can find a demo of AutoProxy [here](https://github.com/Yoinbol/AutoProxyDemo)
+
+Contact
+-------
+
+You can contact me at diegogarcia@yoinbol.com
