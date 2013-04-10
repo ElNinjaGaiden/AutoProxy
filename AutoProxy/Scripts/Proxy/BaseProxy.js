@@ -1,30 +1,38 @@
-﻿function BaseProxy(apiAddress, controllerName) {
-    this.apiAddress = apiAddress != null && apiAddress != '' ? apiAddress : autoproxy.baseUrl;
+﻿function BaseProxy(namespace, controllerName, config) {
+    //this.apiAddress = apiAddress != null && apiAddress != '' ? apiAddress : autoproxy.baseUrl;
+    this.namespace = namespace;
     this.controllerName = controllerName;
+
+    this._config = config;
 }
 
 BaseProxy.prototype = {
     constructor: BaseProxy,
 
-    ResolveRequestUrl: function (actionName) {
+    GetUrl: function (actionName, config) {
         //Creates the url based on the api location, the controller and the action
-        if (autoproxy.includeActionName) {
-            return [this.apiAddress, this.controllerName, actionName].join("/");
+        if (config.includeActionName) {
+            return [config.url, this.controllerName, actionName].join("/");
         }
         else {
-            return [this.apiAddress, this.controllerName].join("/");
+            return [config.url, this.controllerName].join("/");
         }
     },
 
-    ExecuteRequest: function (webActionType, actionName, request, callback, context, carryover) {
-        //Executes a server action request (JSON -> JSON)
+    ExecReq: function (webActionType, actionName, request, callback, context, carryover) {
+        //Grab the config for the corresponding api
+        var config = this._config;
+        if (!config) {
+            config = autoproxy.GetConfig(this.namespace);
+        }
+        //Executes a server action request
         $.ajax(
         {
-            url: this.ResolveRequestUrl(actionName),
+            url: this.GetUrl(actionName, config),
             type: webActionType,
-            dataType: autoproxy.dataType,
-            contentType: autoproxy.contentType,
-            data: (webActionType == 'POST' || webActionType == 'PUT') && request != null ? JSON.stringify(request) : request,
+            dataType: config.dataType,
+            contentType: config.contentType,
+            data: config.contentType.indexOf('json') !== -1 && request != null ? JSON.stringify(request) : request,
             context: context,
             success: function (response) {
                 //Execute the callback function
@@ -38,7 +46,7 @@ BaseProxy.prototype = {
                     //Create an error response
                     var response = {
                         Result: -1,
-                        ResultMessage: 'Communication error!'
+                        ResultMessage: 'Communication error'
                     };
                     callback(response, carryover);
                 }

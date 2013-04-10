@@ -31,7 +31,7 @@ namespace AutoProxy
             if (path.StartsWith("~"))
                 path = path.Replace("~", HostingEnvironment.ApplicationPhysicalPath);
 
-            using (FileStream output = System.IO.File.OpenWrite(path))
+            using (FileStream output = new FileStream(path, FileMode.Create))
             {
                 str.CopyTo(output);
             }

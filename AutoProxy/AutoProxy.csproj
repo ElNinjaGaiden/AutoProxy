@@ -76,6 +76,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\Proxy\ApiConfig.js" />
+    <Content Include="Scripts\Proxy\AutoProxy.js" />
     <Content Include="Scripts\Proxy\BaseProxy.js" />
     <Content Include="Scripts\Proxy\Core.js" />
   </ItemGroup>

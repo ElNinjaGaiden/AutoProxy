@@ -11,6 +11,8 @@ namespace AutoProxy
 
         public Minified MinifiedConfiguration { get; set; }
 
+        public string Namespace { get; set; }
+
         public IMinified Minified
         {
             get

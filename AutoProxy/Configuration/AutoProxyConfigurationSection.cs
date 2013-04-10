@@ -30,6 +30,19 @@ namespace AutoProxy.Configuration
             }
         }
 
+        [ConfigurationProperty("namespace", IsRequired = true)]
+        public string Namespace
+        {
+            get
+            {
+                return (string)this["namespace"];
+            }
+            set
+            {
+                this["namespace"] = value;
+            }
+        }
+
         [ConfigurationProperty("Minified", IsRequired = false)]
         public MinifiedElement MinifiedConfiguration
         {

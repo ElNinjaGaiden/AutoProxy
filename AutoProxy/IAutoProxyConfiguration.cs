@@ -7,5 +7,7 @@
         bool ProxyPerController { get; }
 
         IMinified Minified { get; }
+
+        string Namespace { get; set; }
     }
 }

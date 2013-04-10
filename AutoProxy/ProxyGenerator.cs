@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -84,8 +85,8 @@ namespace AutoProxy
                 //}
                 //inheritPrototype(MyControllerProxy, BaseProxy);
 
-                string prototype = "function " + controller.ProxyName + "(apiAddress) { " + Environment.NewLine +
-                                    "   BaseProxy.call(this, apiAddress, '" + controller.Name + "'); " + Environment.NewLine +
+                string prototype = "function " + controller.ProxyName + "(config) { " + Environment.NewLine +
+                                    "   BaseProxy.call(this, '" + this.Configuration.Namespace + "', '" + controller.Name + "', config); " + Environment.NewLine +
                                     "} " + Environment.NewLine + Environment.NewLine +
                                     "inheritPrototype(" + controller.ProxyName + ", BaseProxy);" + Environment.NewLine + Environment.NewLine;
 
@@ -95,7 +96,7 @@ namespace AutoProxy
                     var hasParameters = action.GetParameters().Any();
 
                     prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
-                                "   this.ExecuteRequest('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
+                                "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
                                 "}; " + Environment.NewLine + Environment.NewLine;
                 }
 
@@ -127,6 +128,11 @@ namespace AutoProxy
 
                 var all = string.Join(Environment.NewLine, result.Prototypes.Select(p => p.Content));
                 var required = string.Join(Environment.NewLine, requiredFilePaths.Select(p => p.ReadFileContent()));
+
+                //Important
+                //Replace the namespace
+                required = required.Replace("__namespace__", "'" + this.Configuration.Namespace + "'");
+
                 all = required + all;
 
                 //Minify all content

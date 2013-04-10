@@ -1,11 +1,10 @@
 ﻿//General AutoProxy configuration
-var autoproxy =
-{
-    baseUrl: '',
-    contentType: 'application/json',
-    dataType: 'json',
-    includeActionName: true
-};
+if (!autoproxy) {
+    var autoproxy = new AutoProxy();
+}
+
+var config = new ApiConfig('', 'application/json', 'json', true);
+autoproxy.SaveConfig(__namespace__, config);
 
 function inheritPrototype(childObject, parentObject) {
     // Crockford’s method to copy the properties and methods from the parentObject onto the childObject
