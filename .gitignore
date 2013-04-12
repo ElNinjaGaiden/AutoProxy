@@ -61,6 +61,7 @@ local.properties
 *.tmp
 *.vspscc
 *.nupkg
+*.nuspec
 .builds
 *.dotCover
 
