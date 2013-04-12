@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using System.Web.Http;
 using AutoProxy.Annotations;
@@ -18,8 +17,6 @@ namespace AutoProxy
     /// </summary>
     public class ProxyGenerator
     {
-        public IEnumerable<Assembly> Assemblies { get; private set; }
-
         public IAutoProxyConfiguration Configuration { get; private set; }
 
         /// <summary>
@@ -27,9 +24,8 @@ namespace AutoProxy
         /// </summary>
         /// <param name="assemblies"></param>
         /// <param name="configuration"></param>
-        public ProxyGenerator(IEnumerable<Assembly> assemblies, AutoProxyConfiguration configuration)
+        public ProxyGenerator(AutoProxyConfiguration configuration)
         {
-            this.Assemblies = assemblies;
             this.Configuration = configuration;
         }
 
@@ -37,14 +33,13 @@ namespace AutoProxy
         /// Loads from configuration file for "AutoProxy" configuration section
         /// </summary>
         /// <param name="assemblies"></param>
-        public ProxyGenerator(IEnumerable<Assembly> assemblies)
+        public ProxyGenerator()
         {
-            this.Assemblies = assemblies;
             this.Configuration = (AutoProxyConfigurationSection)ConfigurationManager.GetSection("AutoProxy");
         }
 
         /// <summary>
-        /// Project a collection of controllers contained into the given web api assembly.
+        /// Project a collection of controllers
         /// </summary>
         private IEnumerable<ControllerMetadata> Controllers
         {
@@ -52,9 +47,21 @@ namespace AutoProxy
             {
                 var flags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance;
 
-                IEnumerable<ControllerMetadata> controllers =
-                    this.Assemblies.SelectMany(a => a.GetTypes())
-                    .Where(t => t.IsSubclassOf(typeof(ApiController)) && t.GetCustomAttribute<AutoProxyIgnore>() == null)
+                IEnumerable<ControllerMetadata> controllers = null;
+                Func<Type, bool> controllersfilter = null;
+
+                if (this.Configuration.Library.Controllers != null && this.Configuration.Library.Controllers.Any())
+                {
+                    controllersfilter = t => t.IsSubclassOf(typeof(ApiController)) 
+                                    && this.Configuration.Library.Controllers.Any(c => c.Name.Equals(t.Name, StringComparison.InvariantCultureIgnoreCase));
+                }
+                else
+                {
+                    controllersfilter = t => t.IsSubclassOf(typeof(ApiController)) && t.GetCustomAttribute<AutoProxyIgnore>() == null;
+                }
+
+                controllers = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+                    .Where(controllersfilter)
                     .Select(o => new ControllerMetadata
                     {
                         Name = o.Name.Replace("Controller", string.Empty),
@@ -76,76 +83,60 @@ namespace AutoProxy
         {
             ProxySet result = new ProxySet();
 
-            //Iterate over each api controller found
-            foreach (var controller in this.Controllers)
-            {
-                //This creates the prototype definition and make it inherits from the BaseProxy prototype. Example:
-                //function MyControllerProxy (apiAddress) {
-                //  BaseProxy.call(this, apiAddress, 'MyController');
-                //}
-                //inheritPrototype(MyControllerProxy, BaseProxy);
-
-                string prototype = "function " + controller.ProxyName + "(config) { " + Environment.NewLine +
-                                    "   BaseProxy.call(this, '" + this.Configuration.Namespace + "', '" + controller.Name + "', config); " + Environment.NewLine +
-                                    "} " + Environment.NewLine + Environment.NewLine +
-                                    "inheritPrototype(" + controller.ProxyName + ", BaseProxy);" + Environment.NewLine + Environment.NewLine;
-
-                //Iterate over controller actions in order to add a new function to the prototype for each action found 
-                foreach (var action in controller.Actions)
-                {
-                    var hasParameters = action.GetParameters().Any();
-
-                    prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
-                                "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
-                                "}; " + Environment.NewLine + Environment.NewLine;
-                }
-
-                //Generate each separated proxy (according configuration)
-                var path = string.Empty;
-                if (this.Configuration.ProxyPerController)
-                {
-                    //Save the current prototype into a script file
-                    path = string.Format("{0}/{1}.{2}", this.Configuration.Output, controller.ProxyName, "js");
-                    prototype.SaveTo(path);
-                }
-
-                result.Prototypes.Add(new ScriptFile { Src = path, Content = prototype });
-            }
-
-            //Generate the all minified proxy (according configuration)
-            if (this.Configuration.Minified.Generate)
+            if (this.Controllers.Any())
             {
                 //Include required scripts first (according files listed into the "Include" node on the configuration section)
-                var requiredFilePaths = this.Configuration.Minified.RequiredFiles.OfType<FileElement>().Select(f =>
+                var requiredFilePaths = this.Configuration.Library.RequiredFiles.Select(f =>
                 {
                     var path = f.Src;
 
                     if (path.StartsWith("~"))
                         path = path.Replace("~", HostingEnvironment.ApplicationPhysicalPath);
 
-                    return Path.Combine(this.Configuration.Output, path);
+                    return path;
                 });
 
-                var all = string.Join(Environment.NewLine, result.Prototypes.Select(p => p.Content));
-                var required = string.Join(Environment.NewLine, requiredFilePaths.Select(p => p.ReadFileContent()));
+                var required = string.Join(Environment.NewLine + Environment.NewLine, requiredFilePaths.Select(p => p.ReadFileContent()));
+                var content = string.Empty;
 
-                //Important
+                //Iterate over each api controller found
+                foreach (var controller in this.Controllers)
+                {
+                    //This creates the prototype definition and make it inherits from the BaseProxy prototype. Example:
+                    string prototype = "function " + controller.ProxyName + "(config) { " + Environment.NewLine +
+                                        "   __namespace__BaseProxy.call(this, '" + controller.Name + "', config); " + Environment.NewLine +
+                                        "} " + Environment.NewLine + Environment.NewLine +
+                                        "inheritPrototype(" + controller.ProxyName + ", __namespace__BaseProxy);" + Environment.NewLine + Environment.NewLine;
+
+                    //Iterate over controller actions in order to add a new function to the prototype for each action found 
+                    foreach (var action in controller.Actions)
+                    {
+                        var hasParameters = action.GetParameters().Any();
+
+                        prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
+                                    "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
+                                    "}; " + Environment.NewLine + Environment.NewLine;
+                    }
+
+                    content += Environment.NewLine + prototype;
+                }
+
                 //Replace the namespace
-                required = required.Replace("__namespace__", "'" + this.Configuration.Namespace + "'");
+                Regex rgx = new Regex("__namespace__");
+                content = rgx.Replace(string.Concat(required, Environment.NewLine, content), this.Configuration.Library.Namespace);
 
-                all = required + all;
+                //File path, by default "~/Scripts/proxy/autoproxy.min.js"
+                var filePath = string.IsNullOrEmpty(this.Configuration.Library.Output) ? "~/Scripts/proxy/autoproxy.min.js" : this.Configuration.Library.Output;
 
-                //Minify all content
-                var minifier = new Minifier();
-                var minified = minifier.MinifyJavaScript(all);
+                if (this.Configuration.Library.Compress)
+                {
+                    //Minify all content
+                    var minifier = new Minifier();
+                    content = minifier.MinifyJavaScript(content);
+                }
 
-                //Save the minified content into a separated file
-                //It uses the given name if exists, otherwise the file name will be "autoproxy-min.js"
-                var minifiedName = !string.IsNullOrEmpty(this.Configuration.Minified.Name) ? this.Configuration.Minified.Name : "autoproxy.min";
-                var minifiedPath = string.Format("{0}/{1}.{2}", this.Configuration.Output, minifiedName, "js");
-                minified.SaveTo(minifiedPath);
-
-                result.Minified = new ScriptFile { Content = minified, Src = minifiedPath };
+                content.SaveTo(filePath);
+                result.Library = new ScriptFile { Content = content, Src = filePath };
             }
 
             return result;

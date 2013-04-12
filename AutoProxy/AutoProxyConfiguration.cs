@@ -9,15 +9,15 @@ namespace AutoProxy
 
         public bool ProxyPerController { get; set; }
 
-        public Minified MinifiedConfiguration { get; set; }
+        public Library LibraryConfiguration { get; set; }
 
         public string Namespace { get; set; }
 
-        public IMinified Minified
+        public ILibrary Library
         {
             get
             {
-                return MinifiedConfiguration;
+                return LibraryConfiguration;
             }
         }
     }

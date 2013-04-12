@@ -4,64 +4,25 @@ namespace AutoProxy.Configuration
 {
     internal class AutoProxyConfigurationSection : ConfigurationSection, IAutoProxyConfiguration
     {
-        [ConfigurationProperty("output", IsRequired = true)]
-        public string Output
+        [ConfigurationProperty("Library", IsRequired = false)]
+        public LibraryElement LibraryConfiguration
         {
             get
             {
-                return (string)this["output"];
+                return (LibraryElement)this["Library"];
             }
             set
             {
-                this["output"] = value;
-            }
-        }
-
-        [ConfigurationProperty("proxyPerController", IsRequired = false, DefaultValue = true)]
-        public bool ProxyPerController
-        {
-            get
-            {
-                return (bool)this["proxyPerController"];
-            }
-            set
-            {
-                this["proxyPerController"] = value;
-            }
-        }
-
-        [ConfigurationProperty("namespace", IsRequired = true)]
-        public string Namespace
-        {
-            get
-            {
-                return (string)this["namespace"];
-            }
-            set
-            {
-                this["namespace"] = value;
-            }
-        }
-
-        [ConfigurationProperty("Minified", IsRequired = false)]
-        public MinifiedElement MinifiedConfiguration
-        {
-            get
-            {
-                return (MinifiedElement)this["Minified"];
-            }
-            set
-            {
-                this["Minified"] = value;
+                this["Library"] = value;
             }
         }
 
 
-        public IMinified Minified
+        public ILibrary Library
         {
             get
             {
-                return this.MinifiedConfiguration;
+                return this.LibraryConfiguration;
             }
             set
             {

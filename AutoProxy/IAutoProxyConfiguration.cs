@@ -2,12 +2,6 @@
 {
     public interface IAutoProxyConfiguration
     {
-        string Output { get; }
-
-        bool ProxyPerController { get; }
-
-        IMinified Minified { get; }
-
-        string Namespace { get; set; }
+        ILibrary Library { get; }
     }
 }
