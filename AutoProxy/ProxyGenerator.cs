@@ -103,8 +103,8 @@ namespace AutoProxy
                 foreach (var controller in this.Controllers)
                 {
                     //This creates the prototype definition and make it inherits from the BaseProxy prototype. Example:
-                    string prototype = "function " + controller.ProxyName + "(config) { " + Environment.NewLine +
-                                        "   __namespace__BaseProxy.call(this, '" + controller.Name + "', config); " + Environment.NewLine +
+                    string prototype = "function " + controller.ProxyName + "() { " + Environment.NewLine +
+                                        "   __namespace__BaseProxy.call(this, '" + controller.Name + "'); " + Environment.NewLine +
                                         "} " + Environment.NewLine + Environment.NewLine +
                                         "inheritPrototype(" + controller.ProxyName + ", __namespace__BaseProxy);" + Environment.NewLine + Environment.NewLine;
 
