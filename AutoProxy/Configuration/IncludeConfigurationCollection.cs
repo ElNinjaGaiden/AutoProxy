@@ -2,7 +2,7 @@
 
 namespace AutoProxy.Configuration
 {
-    internal class RequiredConfigurationCollection : ConfigurationElementCollection
+    internal class IncludeConfigurationCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {

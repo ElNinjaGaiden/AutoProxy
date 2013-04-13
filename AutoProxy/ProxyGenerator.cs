@@ -82,11 +82,12 @@ namespace AutoProxy
         public ProxySet ResolveProxies()
         {
             ProxySet result = new ProxySet();
+            var controllers = this.Controllers;
 
-            if (this.Controllers.Any())
+            if (controllers.Any())
             {
                 //Include required scripts first (according files listed into the "Include" node on the configuration section)
-                var requiredFilePaths = this.Configuration.Library.RequiredFiles.Select(f =>
+                var requiredFilePaths = this.Configuration.Library.IncludeFiles.Select(f =>
                 {
                     var path = f.Src;
 
@@ -100,7 +101,7 @@ namespace AutoProxy
                 var content = string.Empty;
 
                 //Iterate over each api controller found
-                foreach (var controller in this.Controllers)
+                foreach (var controller in controllers)
                 {
                     //This creates the prototype definition and make it inherits from the BaseProxy prototype. Example:
                     string prototype = "function " + controller.ProxyName + "() { " + Environment.NewLine +
@@ -113,8 +114,8 @@ namespace AutoProxy
                     {
                         var hasParameters = action.GetParameters().Any();
 
-                        prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, carryover) { " + Environment.NewLine +
-                                    "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, carryover); " + Environment.NewLine +
+                        prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, error) { " + Environment.NewLine +
+                                    "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, error); " + Environment.NewLine +
                                     "}; " + Environment.NewLine + Environment.NewLine;
                     }
 

@@ -34,7 +34,7 @@ __namespace__BaseProxy.prototype = {
         }
     },
 
-    ExecReq: function (webActionType, actionName, request, callback, context, carryover) {
+    ExecReq: function (webActionType, actionName, request, callback, context, error) {
         //Executes a server action request
         $.ajax(
         {
@@ -45,16 +45,8 @@ __namespace__BaseProxy.prototype = {
             data: this.contentType.indexOf('json') !== -1 && request != null ? JSON.stringify(request) : request,
             context: context,
             timeout: this.timeout,
-            success: function (response) {
-                //Execute the callback function
-                if (typeof callback === 'function') {
-                    callback(response, carryover);
-                }
-            },
-            error: this.error
+            success: callback,
+            error: error
         });
-    },
-
-    error: function (jqXHR, textStatus, errorThrown) {
     }
 };

@@ -6,8 +6,8 @@
       <!--<Controller name="" />-->
     </Controllers>
     <!--This is a list of files to be included into the library final version.-->
-    <Required>
+    <Include>
       <File src="~/Scripts/proxy/autoproxy.core.js" />
-    </Required>
+    </Include>
   </Library>
 </AutoProxy>

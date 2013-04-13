@@ -10,7 +10,7 @@ namespace AutoProxy
 
         public string Namespace { get; set; }
 
-        public IEnumerable<IFile> RequiredFiles { get; set; }
+        public IEnumerable<IFile> IncludeFiles { get; set; }
 
         public IEnumerable<IController> Controllers { get; set; }
     }

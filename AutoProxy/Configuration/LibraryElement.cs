@@ -45,25 +45,25 @@ namespace AutoProxy.Configuration
             }
         }
 
-        [ConfigurationProperty("Required", IsRequired = false)]
-        public RequiredConfigurationCollection RequiredCollection
+        [ConfigurationProperty("Include", IsRequired = false)]
+        public IncludeConfigurationCollection IncludeCollection
         {
             get
             {
-                return ((RequiredConfigurationCollection)(base["Required"]));
+                return ((IncludeConfigurationCollection)(base["Include"]));
             }
             set
             {
-                base["Required"] = value;
+                base["Include"] = value;
             }
         }
 
 
-        public IEnumerable<IFile> RequiredFiles
+        public IEnumerable<IFile> IncludeFiles
         {
             get
             {
-                return this.RequiredCollection.OfType<FileElement>();
+                return this.IncludeCollection.OfType<FileElement>();
             }
         }
 

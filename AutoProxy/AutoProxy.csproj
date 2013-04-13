@@ -46,6 +46,7 @@
     <Compile Include="AutoProxyConfiguration.cs" />
     <Compile Include="Configuration\ControllerElement.cs" />
     <Compile Include="Configuration\ControllersConfigurationCollection.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="ControllerMetadata.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -55,7 +56,7 @@
     <Compile Include="IController.cs" />
     <Compile Include="IFile.cs" />
     <Compile Include="ILibrary.cs" />
-    <Compile Include="Configuration\RequiredConfigurationCollection.cs" />
+    <Compile Include="Configuration\IncludeConfigurationCollection.cs" />
     <Compile Include="Configuration\AutoProxyConfigurationSection.cs" />
     <Compile Include="Library.cs" />
     <Compile Include="Configuration\LibraryElement.cs" />
