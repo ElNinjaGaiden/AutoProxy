@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AutoProxy>
+  <Library output="~/Scripts/proxy/autoproxy.min.js" namespace="" compress="true" >
+    <Controllers>
+      <!--If emtpy then AutoProxy will look for all api controllers into de app domain-->
+      <!--<Controller name="" />-->
+    </Controllers>
+    <!--This is a list of files to be included into the library final version.-->
+    <Include>
+      <File src="~/Scripts/proxy/autoproxy.core.js" />
+    </Include>
+  </Library>
+</AutoProxy>
