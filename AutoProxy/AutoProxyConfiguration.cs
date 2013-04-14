@@ -4,18 +4,13 @@ namespace AutoProxy
 {
     public class AutoProxyConfiguration: IAutoProxyConfiguration
     {
+        public Library LibraryConfiguration { get; set; }
 
-        public string Output { get; set; }
-
-        public bool ProxyPerController { get; set; }
-
-        public Minified MinifiedConfiguration { get; set; }
-
-        public IMinified Minified
+        public ILibrary Library
         {
             get
             {
-                return MinifiedConfiguration;
+                return LibraryConfiguration;
             }
         }
     }

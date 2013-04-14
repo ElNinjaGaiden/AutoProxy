@@ -44,16 +44,22 @@
     <Compile Include="Annotations\AutoProxyAlias.cs" />
     <Compile Include="Annotations\AutoProxyIgnore.cs" />
     <Compile Include="AutoProxyConfiguration.cs" />
+    <Compile Include="Configuration\ControllerElement.cs" />
+    <Compile Include="Configuration\ControllersConfigurationCollection.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="ControllerMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="File.cs" />
     <Compile Include="Configuration\FileElement.cs" />
     <Compile Include="IAutoProxyConfiguration.cs" />
+    <Compile Include="IController.cs" />
     <Compile Include="IFile.cs" />
-    <Compile Include="IMinified.cs" />
+    <Compile Include="ILibrary.cs" />
     <Compile Include="Configuration\IncludeConfigurationCollection.cs" />
     <Compile Include="Configuration\AutoProxyConfigurationSection.cs" />
-    <Compile Include="Minified.cs" />
-    <Compile Include="Configuration\MinifiedElement.cs" />
-    <Compile Include="ControllerMetadata.cs" />
+    <Compile Include="Library.cs" />
+    <Compile Include="Configuration\LibraryElement.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptFile.cs" />
@@ -70,14 +76,16 @@
     <None Include="AutoProxy.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="AutoProxy.config.transform">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Web.config.transform">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\Proxy\BaseProxy.js" />
-    <Content Include="Scripts\Proxy\Core.js" />
+    <Content Include="Scripts\proxy\autoproxy.core.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
