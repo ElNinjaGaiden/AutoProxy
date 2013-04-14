@@ -35,6 +35,11 @@ __namespace__BaseProxy.prototype = {
     },
 
     ExecReq: function (webActionType, actionName, request, callback, context, error) {
+        //Prepare the data to send
+        var data = request;
+        if (request != null && this.contentType.indexOf('json') !== -1 && (webActionType === 'POST' || webActionType === 'PUT')) {
+            data = JSON.stringify(request);
+        }
         //Executes a server action request
         $.ajax(
         {
@@ -42,7 +47,7 @@ __namespace__BaseProxy.prototype = {
             type: webActionType,
             dataType: this.dataType,
             contentType: this.contentType,
-            data: this.contentType.indexOf('json') !== -1 && request != null ? JSON.stringify(request) : request,
+            data: data,
             context: context,
             timeout: this.timeout,
             success: callback,
