@@ -275,7 +275,7 @@ The idea is make this configuration "global" and then we just need to instanciat
 
 ### Instance level
 
-There is one last level of configuration: instance level. Due configuration settings are defined at the prototype definition of the AutoProxy super class, each proxy instance inherits this properties and you can set them at instance level:
+There is one last level of configuration: instance level. Due configuration settings are defined at the prototype definition of the base proxy class, each proxy instance inherits this properties and you can set them at instance level:
 
     <script type="text/javascript">
         $(document).ready(function () {
