@@ -19,8 +19,9 @@ function __namespace__BaseProxy(controllerName) {
 __namespace__BaseProxy.prototype = {
     constructor: __namespace__BaseProxy,
     url: '',
-    contentType: 'application/json',
+    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
     dataType: 'json',
+    crossDomain: false,
     includeActionName: true,
     timeout: 0,
 
@@ -49,6 +50,7 @@ __namespace__BaseProxy.prototype = {
             contentType: this.contentType,
             data: data,
             context: context,
+            crossDomain: this.crossDomain,
             timeout: this.timeout,
             success: callback,
             error: error
