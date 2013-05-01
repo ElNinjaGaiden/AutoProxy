@@ -199,10 +199,11 @@ Client side configuration
 Firts of all, let's take a look at the available configuration settings:
 
 * url: to set the web api base url. Default: ''
-* contentType: to set the data type you will be sending to the server. Default: 'application/json'
+* contentType: to set the data type you will be sending to the server. Default: 'application/x-www-form-urlencoded; charset=UTF-8'
 * dataType: to set the data type you will be expecting back from the server. Default: 'json'
 * includeActionName: to specify if controller action should be added to the url (some people prefer to configure their controllers as the very basic REST form). Default: true
 * timeout: 0
+* crossDomain: Default: false
 
 This configuration can be done at prototype definition level or at proxy instance level. 
 
