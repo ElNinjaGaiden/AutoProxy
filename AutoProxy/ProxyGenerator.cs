@@ -114,8 +114,8 @@ namespace AutoProxy
                     {
                         var hasParameters = action.GetParameters().Any();
 
-                        prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "callback, context, error) { " + Environment.NewLine +
-                                    "   this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "callback, context, error); " + Environment.NewLine +
+                        prototype += controller.ProxyName + ".prototype." + action.GetProxyName(action.Name) + " = function (" + (hasParameters ? "request, " : string.Empty) + "context) { " + Environment.NewLine +
+                                    "   return this.ExecReq('" + action.ResolveWebMethodType() + "', '" + action.Name + "', " + (hasParameters ? "request, " : "null, ") + "context); " + Environment.NewLine +
                                     "}; " + Environment.NewLine + Environment.NewLine;
                     }
 
@@ -126,9 +126,6 @@ namespace AutoProxy
                 Regex rgx = new Regex("__namespace__");
                 content = rgx.Replace(string.Concat(required, Environment.NewLine, content), this.Configuration.Library.Namespace);
 
-                //File path, by default "~/Scripts/proxy/autoproxy.min.js"
-                var filePath = string.IsNullOrEmpty(this.Configuration.Library.Output) ? "~/Scripts/proxy/autoproxy.min.js" : this.Configuration.Library.Output;
-
                 if (this.Configuration.Library.Compress)
                 {
                     //Minify all content
@@ -136,7 +133,14 @@ namespace AutoProxy
                     content = minifier.MinifyJavaScript(content);
                 }
 
-                content.SaveTo(filePath);
+                var filePath = string.Empty;
+                if (this.Configuration.Library.SaveFile) 
+                {
+                    //File path, by default "~/Scripts/proxy/autoproxy.min.js"
+                    filePath = string.IsNullOrEmpty(this.Configuration.Library.Output) ? "~/Scripts/proxy/autoproxy.min.js" : this.Configuration.Library.Output;
+                    content.SaveTo(filePath);
+                }
+
                 result.Library = new ScriptFile { Content = content, Src = filePath };
             }
 

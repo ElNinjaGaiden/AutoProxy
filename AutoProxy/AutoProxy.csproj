@@ -76,9 +76,6 @@
     <None Include="AutoProxy.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="AutoProxy.config.transform">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
     <None Include="Web.config.transform">
       <SubType>Designer</SubType>

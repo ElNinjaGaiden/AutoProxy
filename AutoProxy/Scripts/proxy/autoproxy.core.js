@@ -35,25 +35,23 @@ __namespace__BaseProxy.prototype = {
         }
     },
 
-    ExecReq: function (webActionType, actionName, request, callback, context, error) {
+    ExecReq: function (webActionType, actionName, request, context) {
         //Prepare the data to send
         var data = request;
         if (request != null && this.contentType.indexOf('json') !== -1 && (webActionType === 'POST' || webActionType === 'PUT')) {
             data = JSON.stringify(request);
         }
         //Executes a server action request
-        $.ajax(
+        return $.ajax(
         {
-            url: this.GetUrl(actionName),
-            type: webActionType,
-            dataType: this.dataType,
-            contentType: this.contentType,
-            data: data,
-            context: context,
-            crossDomain: this.crossDomain,
-            timeout: this.timeout,
-            success: callback,
-            error: error
+            url: this.GetUrl(actionName), //url
+            type: webActionType, //GET/POST/PUT/DELETE/OPTIONS
+            dataType: this.dataType, //data type returned by the server
+            contentType: this.contentType, //data type to send to the server
+            data: data, //data
+            context: context, //callbacks execution context
+            crossDomain: this.crossDomain, // cross domain
+            timeout: this.timeout //timeout
         });
     }
 };

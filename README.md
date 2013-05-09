@@ -47,9 +47,9 @@ AutoProxy is a javascript proxy generator. Its intention is to create javascript
 
 *  You can define the subset of the web api controllers to take in consideration when creating the library
 *  If you do not define a controllers subset, it will look for all the api controllers into all the dll's of the current app domain
-*  You can configure also the output of the library, the file name, if the file should be compressed or not and the *namespace* of your web api (we will discuss the importance of this later)   
+*  You can configure also if you want to save the library on the file system, the file name/output, if the file should be compressed or not and the *namespace* of your web api (we will discuss the importance of this later)   
 *  You can include custom javascript files into the final library
-*  Due its philosophy is the OOP paradigm, the client side configuration can be done both at instance level and at *class* (prototype) level  
+*  Due its philosophy is the OOP paradigm, the client side configuration can be done both at instance level and at *class* (prototype) level, o even at a library level
 *  It allows the convivence of several proxy libraries for those sites which needs to consume several web api's
 
 The goal is implement OOP on the client side as well as creates a library/libraries which help us to standarize the way we interact with our servers.
@@ -91,18 +91,18 @@ Your calls can be implemented like this:
     
       //Get one
       var request = { id: 2 };
-      proxy.Get(request, callback);
+      proxy.Get(request).done(callback);
     
       //New
       var newPerson = { ID: 10, Name: 'Jhon' };
-      proxy.Save(newPerson, callback);
+      proxy.Save(newPerson).done(callback);
       
       //Other
       var otherRequest = {};
-      proxy.OtherThing(otherRequest, callback);
+      proxy.OtherThing(otherRequest).done(callback);
       
       function callback(response) {
-          console.log(response);
+          console.log(response);    
       }
     });
     
@@ -141,7 +141,7 @@ And then we would be talking about something like this:
       var proxy = new MyController();
     
       //"Get all"
-      proxy.MyFunction(callback, this);
+      proxy.MyFunction().done(callback);
       
       function callback(response) {
           console.log(response);
@@ -155,7 +155,7 @@ Ignoring elements
 
 There is also this `AutoProxyIgnore` attribute that you can use in order to ignore controllers and/or action when creating your proxy library
 
-	public class PersonsController : ApiController
+    public class PersonsController : ApiController
     {
       [HttpPost]
 	  [AutoProxyIgnore]
@@ -267,9 +267,10 @@ The idea is make this configuration "global" and then we just need to instanciat
             var personsProxy = new PersonsProxy();
 
             //Pull all
-            personsProxy.GetAll(callback);
+            personsProxy.GetAll().done(callback);
 
             function callback(response) {
+                //Your logic...
             }
         });
     </script>
@@ -286,7 +287,7 @@ There is one last level of configuration: instance level. Due configuration sett
             personsProxy.dataType = 'json';
 
             //Pull all
-            personsProxy.GetAll(callback);
+            personsProxy.GetAll().done(callback);
 
             function callback(response) {
             }
@@ -295,14 +296,63 @@ There is one last level of configuration: instance level. Due configuration sett
 
 The strategy you choose to configure your proxies is up to you.
 
-Client side methods convention
+Client side use convention
 ------------------------------
+
+### Parameters
 
 All the api call methods generated into the libraries follow this parameters convention:
 
-* Methods without parameters: (callback, executionContext, onCommunicationError)
-* Methods with parameters: (request, callback, executionContext, onCommunicationError)
+* Methods without parameters: ([optional]context)
+* Methods with parameters: (request, [optional]context)
 
+Examples: 
+
+    $(document).ready(function() { 
+        //Create the proxy
+        var proxy = new SomeProxy();
+        
+        //Sending parameters, default context for callbacks
+        var proxy.FunctionOne({ param1: 10, param2: 20 });
+        
+        //Sending parameters, some context for callbacks
+        var context = this;
+        var proxy.FunctionOne({ param1: 10, param2: 20 }, context);
+        
+        //No parameters, default context for callbacks
+        var proxy.FunctionTwo();
+        
+        //No parameters, some context for callbacks
+        var proxy.FunctionTwo(context);
+        
+        //NOTE: context is optional always!
+    });
+
+### Callbacks
+
+For callbacks, AutoProxy simply returns the jqXHR (XMLHttpRequest) object returned by the ajax call, which implements the Promise interface (see [Deferred Object](http://api.jquery.com/category/deferred-object/) for more information).
+This way you can configure one or more callbacks for different situations, like this:
+
+    $(document).ready(function () {
+        //Create the proxy
+        var personsProxy = new PersonsProxy();
+
+        //Pull all
+        var r = personsProxy.GetAll().done(function () { })
+                                    .fail(function () { })
+                                    .always(function () { });
+                            
+        
+        //Second callback
+        r.done(secondDoneCallback);
+        
+        function secondDoneCallback() {
+        }
+    });
+    
+The execution context within all callbacks is the context passed to the proxy function.
+
+[jQueryAjax](http://api.jquery.com/jQuery.ajax/) is your friend. Go there if you need go deeper.
 
 Dependencies
 ------------

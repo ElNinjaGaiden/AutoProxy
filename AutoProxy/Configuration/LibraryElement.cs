@@ -6,6 +6,19 @@ namespace AutoProxy.Configuration
 {
     internal class LibraryElement : ConfigurationElement, ILibrary
     {
+        [ConfigurationProperty("saveFile", IsRequired = false, DefaultValue = true)]
+        public bool SaveFile
+        {
+            get
+            {
+                return (bool)this["saveFile"];
+            }
+            set
+            {
+                this["saveFile"] = value;
+            }
+        }
+
         [ConfigurationProperty("output", IsRequired = true)]
         public string Output
         {

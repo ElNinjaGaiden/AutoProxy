@@ -4,6 +4,8 @@ namespace AutoProxy
 {
     public interface ILibrary
     {
+        bool SaveFile { get; }
+
         string Output { get; }
 
         bool Compress { get; }
