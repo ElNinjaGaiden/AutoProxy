@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <projectUrl>https://github.com/Yoinbol/AutoProxy</projectUrl>
+    <projectUrl>https://github.com/ElNinjaGaiden/AutoProxy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <tags>ASP.NET MVC WebApi Javascript OOP</tags>

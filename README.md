@@ -365,7 +365,7 @@ AutoProxy depends on this packages:
 Demo
 ----
 
-You can find a demo of AutoProxy [here](https://github.com/Yoinbol/AutoProxyDemo)
+You can find a demo of AutoProxy [here](https://github.com/ElNinjaGaiden/AutoProxyDemo)
 
 Contact
 -------
